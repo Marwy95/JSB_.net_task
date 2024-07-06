@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using JSB_.net_task.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
 
 namespace JSB_.net_task.Data
 {
@@ -8,7 +10,9 @@ namespace JSB_.net_task.Data
         {
 
         }
-       // pro
+        public DbSet<Models.Task>Tasks { get; set; }
+        public DbSet<TeamMember> TeamMembers { get; set; }
+       
 
     }
 }
