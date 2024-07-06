@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\JSB_.net_task.props" />
+</Project>
