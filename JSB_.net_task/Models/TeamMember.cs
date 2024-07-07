@@ -10,6 +10,6 @@ namespace JSB_.net_task.Models
         [Required]
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
-        public ICollection<Task> Tasks { get; set; } = new List<Task>();
+        public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
     }
 }

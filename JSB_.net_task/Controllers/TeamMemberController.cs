@@ -1,6 +1,7 @@
 ﻿using JSB_.net_task.Data;
 using JSB_.net_task.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace JSB_.net_task.Controllers
 {
@@ -15,22 +16,36 @@ namespace JSB_.net_task.Controllers
         }
         //Get All Members
         [HttpGet]
-        public IEnumerable<TeamMember> GetAllMembers()
+        public ActionResult<ICollection<TeamMember>> GetAllMembers()
         {
-            var allmembers = _context.TeamMembers.ToList();
-            return allmembers;
+            var allmembers = _context.TeamMembers
+                             .Include(m => m.Tasks)
+                             .ToList();
+            if (allmembers.Count == 0)
+            {
+                return NotFound();
+            }
+         
+            return Ok(allmembers);
+
         }
+        
         //Get Member By Id
         [HttpGet("{id}")]
         public ActionResult<TeamMember> GetMemberById(int id)
         {
-            var member = _context.TeamMembers.Find(id);
+            var member = _context.TeamMembers
+
+                .Include(m => m.Tasks)
+                             .SingleOrDefault(m=>m.Id == id);
             if (member == null)
             {
                 return NotFound("Id Doesn't Exist");
             }
             return Ok(member);
         }
+        
+        //Add New Member
         [HttpPost]
         public ActionResult AddMember(TeamMember member)
         {
@@ -41,12 +56,14 @@ namespace JSB_.net_task.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+               
                 return BadRequest(ex.Message);
             }
 
             return Ok();
         }
+        
+        //Edit Member By Id
         [HttpPut("{id}")]
         public ActionResult EditMember(int id,TeamMember member) {
 
@@ -60,17 +77,28 @@ namespace JSB_.net_task.Controllers
             _context.SaveChanges();
             return NoContent();
         }
+        
+        //Delete Member By Id
         [HttpDelete("{id}")]
         public ActionResult DeleteMember(int id)
         {
-            var member = _context.TeamMembers.Find(id);
-            if (member == null)
+            try
             {
-                return NotFound("Id Doesn't Exist");
+                var member = _context.TeamMembers.Find(id);
+                if (member == null)
+                {
+                    return NotFound("Id Doesn't Exist");
+                }
+                _context.TeamMembers.Remove(member);
+                _context.SaveChanges();
+                return NoContent();
             }
-            _context.TeamMembers.Remove(member);
-            _context.SaveChanges();
-            return NoContent();
+            catch (DbUpdateException ex)
+            {
+                
+                return BadRequest("Member can't be deleted because it has a task");
+            }
+           
         }
 
 

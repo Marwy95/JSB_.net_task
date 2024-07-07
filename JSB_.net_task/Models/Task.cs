@@ -14,7 +14,7 @@ namespace JSB_.net_task.Models
         public DateTime StartDate { get; set;}
         public DateTime EndDate { get; set; }
         public int? TeamMemberId { get; set; } 
-        public TeamMember? TeamMember { get; set; } 
+        public virtual TeamMember? TeamMember { get; set; } 
 
 
     }
