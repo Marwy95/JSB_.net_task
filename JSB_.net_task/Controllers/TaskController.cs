@@ -62,20 +62,27 @@ namespace JSB_.net_task.Controllers
         [HttpPut("{id}")]
         public ActionResult EditTask(int id, Models.Task task)
         {
-
-            var existingtask = _context.Tasks.Find(id);
-            if (existingtask == null)
+            try
             {
-                return NotFound("Id Doesn't Exist");
+                var existingtask = _context.Tasks.Find(id);
+                if (existingtask == null)
+                {
+                    return NotFound("Id Doesn't Exist");
+                }
+                existingtask.Name = task.Name;
+                existingtask.Description = task.Description;
+                existingtask.Status = task.Status;
+                existingtask.StartDate = task.StartDate;
+                existingtask.EndDate = task.EndDate;
+                existingtask.TeamMemberId = task.TeamMemberId;
+                _context.SaveChanges();
+                return NoContent();
             }
-            existingtask.Name = task.Name;
-            existingtask.Description = task.Description;
-            existingtask.Status = task.Status;
-            existingtask.StartDate = task.StartDate;
-            existingtask.EndDate = task.EndDate;
-            existingtask.TeamMemberId = task.TeamMemberId;
-            _context.SaveChanges();
-            return NoContent();
+            catch (DbUpdateException ex)
+            {
+                return BadRequest("The Member You're trying to add the task to doesn't exist");
+            }
+  
         }
         
         //Delete Task By Id
